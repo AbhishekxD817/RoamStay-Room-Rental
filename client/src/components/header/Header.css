@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Arizonia&family=Pacifico&family=Rancho&display=swap');
+
+
+.pacifico-regular {
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.rancho-regular {
+  font-family: "Rancho", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.arizonia-regular {
+  font-family: "Arizonia", serif;
+  font-weight: 400;
+  font-style: normal;
+}

@@ -1,0 +1,5 @@
+.env
+/node_modules
+
+# Temp data for db
+data
