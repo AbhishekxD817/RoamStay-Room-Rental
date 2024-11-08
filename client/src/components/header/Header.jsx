@@ -61,8 +61,8 @@ export default function Header() {
         </NavbarItem>
         <NavbarItem className=''>
           <Link color="foreground" to="/dashboard" className='flex justify-center items-center'>
-          {/* <RiDashboardHorizontalFill /> */}
-          Dashboard 
+            {/* <RiDashboardHorizontalFill /> */}
+            Dashboard
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -97,6 +97,16 @@ export default function Header() {
             size="lg"
           >
             Listings
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link
+            className="w-full"
+            color="primary"
+            to="/dashboard"
+            size="lg"
+          >
+            Dashboard
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
