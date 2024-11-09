@@ -1,16 +1,29 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { showListing } from "../../api/listingApi.js";
+import { useForm } from 'react-hook-form';
 
 import { Card, CardBody, CardHeader, CardFooter, CardProvider } from "@nextui-org/card";
-import { DollarSign, IndianRupee, MapPin } from "lucide-react";
+import { Delete, DollarSign, Edit, IndianRupee, MapPin, Send, Star, Trash } from "lucide-react";
 import { Button } from "@nextui-org/button";
 import { Image } from "@nextui-org/image";
+import { createReview, deleteReview, updateReview } from "../../api/reviewApi.js";
+import ReviewCard from "../../components/review card/ReviewCard.jsx";
 
 const ShowListingPage = () => {
     const { id } = useParams();
     const [error, setError] = useState(null);
     const [listing, setListing] = useState();
+
+    async function fetchListing() {
+        const response = await showListing(id);
+        if (response.status != 200) {
+            console.log(response);
+            setError(response);
+            return;
+        }
+        setListing(response.data.listing);
+    }
 
     useEffect(() => {
         document.title = listing ? listing.title : "Error";
@@ -18,15 +31,31 @@ const ShowListingPage = () => {
 
     useEffect(() => {
         (async function () {
-            const response = await showListing(id);
-            if (response.status != 200) {
-                console.log(response);
-                setError(response);
-                return;
-            }
-            setListing(response.data.listing);
+            await fetchListing();
         })()
     }, [])
+
+
+
+    // handle reviews(
+    const { register, handleSubmit, reset } = useForm();
+
+    const handleReviewFormSubmit = async (data) => {
+        try {
+            let response = await createReview(listing._id, data);
+            if (response.status == 200) {
+                await fetchListing();
+                reset();
+                return;
+            }
+            console.log(response);
+        } catch (error) {
+            console.log("ERrror => ", error);
+        }
+    }
+
+
+
 
 
     return (
@@ -71,7 +100,52 @@ const ShowListingPage = () => {
                     </Card>
 
                     <section className="mt-12">
+                        <div className="mx-auto p-4">
+                        <h2 className="text-2xl font-bold mb-4">Drop a review</h2>
 
+                            <form onSubmit={handleSubmit(handleReviewFormSubmit)} className="mb-8 border border-slate-300 rounded-lg p-2 shadow-md shadow-slate-300" >
+                                <div className="mb-4">
+                                    <textarea
+                                        className="w-full bg-slate-50 border-1 p-2"
+                                        label="Your Review"
+                                        placeholder="Write your review here..."
+                                        rows={3}
+                                        {...register('content')}
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <input
+                                        type="number"
+                                        label="Rating"
+                                        min={1}
+                                        max={5}
+                                        placeholder="rating 1-5"
+                                        {...register('ratings')}
+                                        className="w-full bg-slate-50 border-1 p-2"
+                                    />
+                                </div>
+                                <div className="py-2">
+
+                                    <Button
+                                        color="secondary"
+                                        type="submit"
+                                        endContent={<Send className="w-4 h-4" />}
+                                    >
+                                        Submit Review
+                                    </Button>
+                                </div>
+                            </form>
+
+
+                            {/* list */}
+                            <h3 className="text-xl font-bold mb-4">No. of Reviews - {listing.reviews.length}</h3>
+
+                            <div className="space-y-4">
+                                {listing.reviews.map((review) => (
+                                    <ReviewCard key={review._id} review={review} lid={listing._id} fetchListing={fetchListing} />
+                                ))}
+                            </div>
+                        </div>
                     </section>
 
                 </div>

@@ -13,7 +13,9 @@ export const allListings = async (req, res, next) => {
 
 export const showListing = async (req, res, next) => {
     let { id } = req.params;
-    let listing = await Listing.findById(id);
+    let listing = await Listing.findById(id).populate({
+        path:'reviews'
+    });
     return res.json({
         listing
     })

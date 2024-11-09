@@ -2,6 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import connectDb from './utils/db.js';
 import listingRouter from './routers/listing-router.js';
+import reviewRouter from './routers/review-router.js';
 import ExpressErrors from './utils/ExpressErrors.js';
 import cors from 'cors';
 
@@ -12,10 +13,11 @@ const corsOptions = {
     credentials:true
 }
 app.use(cors(corsOptions));
-app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
 
+app.use('/listings/:lid/reviews',reviewRouter);
 app.use('/listings',listingRouter);
 
 
