@@ -11,9 +11,9 @@ const reviewSchema = mongoose.Schema({
         max: 5,
         default: 3
     },
-    listing: {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Listing"
+        ref: "User"
     }
 }, { timestamps: true })
 

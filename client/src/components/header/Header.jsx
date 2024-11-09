@@ -19,9 +19,30 @@ import { VscLinkExternal } from 'react-icons/vsc';
 import { TbExternalLink } from "react-icons/tb";
 import { RxDashboard } from 'react-icons/rx';
 import { RiDashboardHorizontalFill } from 'react-icons/ri';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../api/authApi';
+import { clearUser } from '../../store/slice/authSlice';
 
 
 export default function Header() {
+  const auth = useSelector((store) => store.auth);
+  const dispatch = useDispatch();
+
+  const handleLogoutBtn = async() =>{
+    try {
+      let response = await logout();
+      if(response.status != 200){
+        console.log(response);
+        return;
+      }
+      dispatch(clearUser());
+      return;
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  }
+
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
 
   return (
@@ -59,25 +80,44 @@ export default function Header() {
             Listings
           </Link>
         </NavbarItem>
-        <NavbarItem className=''>
-          <Link color="foreground" to="/dashboard" className='flex justify-center items-center'>
-            {/* <RiDashboardHorizontalFill /> */}
-            Dashboard
-          </Link>
-        </NavbarItem>
+        {
+          auth.isAuthenticated == true &&
+          <NavbarItem className=''>
+            <Link color="foreground" to="/dashboard" className='flex justify-center items-center'>
+              {/* <RiDashboardHorizontalFill /> */}
+              Dashboard
+            </Link>
+          </NavbarItem>
+        }
+
       </NavbarContent>
 
-      <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link to="/auth">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" to="/auth" variant="flat">
-            Register
-          </Button>
-        </NavbarItem>
-      </NavbarContent>
+      {auth.isAuthenticated == false ?
+        <>
+          <NavbarContent justify="end">
+            <NavbarItem className="hidden lg:flex">
+              <Link to="/auth">Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button as={Link} color="primary" to="/auth" variant="flat">
+                Register
+              </Button>
+            </NavbarItem>
+          </NavbarContent>
+        </>
+        :
+        <NavbarContent>
+          <NavbarItem>
+            <Button color="danger" variant="flat" onClick={handleLogoutBtn}>
+              Logout
+            </Button>
+          </NavbarItem>
+        </NavbarContent>
+      }
 
+
+
+      {/* phone */}
       <NavbarMenu className='z-10 absolute top-14 left-0 bg-background'>
         <NavbarMenuItem>
           <Link
@@ -99,36 +139,58 @@ export default function Header() {
             Listings
           </Link>
         </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            className="w-full"
-            color="primary"
-            to="/dashboard"
-            size="lg"
-          >
-            Dashboard
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            className="w-full"
-            color="foreground"
-            to="/auth"
-            size="lg"
-          >
-            Login
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            className="w-full"
-            color="primary"
-            to="/auth"
-            size="lg"
-          >
-            Register
-          </Link>
-        </NavbarMenuItem>
+        {
+          auth.isAuthenticated == false ?
+            <>
+              <NavbarMenuItem>
+                <Link
+                  className="w-full"
+                  color="foreground"
+                  to="/auth"
+                  size="lg"
+                >
+                  Login
+                </Link>
+              </NavbarMenuItem>
+              <NavbarMenuItem>
+                <Link
+                  className="w-full"
+                  color="primary"
+                  to="/auth"
+                  size="lg"
+                >
+                  Register
+                </Link>
+              </NavbarMenuItem>
+            </>
+            :
+            <>
+
+              <NavbarMenuItem>
+                <Link
+                  className="w-full"
+                  color="primary"
+                  to="/dashboard"
+                  size="lg"
+                >
+                  Dashboard
+                </Link>
+              </NavbarMenuItem>
+              <NavbarMenuItem>
+                <Button
+                  className="w-full m-0"
+                  color="danger"
+                  variant="flat"
+                  onClick={handleLogoutBtn}
+                  size="md"
+                >
+                  Logout
+                </Button>
+              </NavbarMenuItem>
+
+            </>
+
+        }
       </NavbarMenu>
     </Navbar>
   )

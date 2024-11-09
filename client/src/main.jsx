@@ -11,7 +11,8 @@ import EditListingPage from './pages/listings/EditListingPage.jsx';
 import CreateListingPage from './pages/listings/CreateListingPage.jsx';
 import Auth from './pages/Auth/Auth.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
-
+import store from './store/store.js'
+import { Provider } from 'react-redux'
 
 
 
@@ -36,7 +37,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <NextUIProvider>
-      <RouterProvider router={router} />
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
     </NextUIProvider>
   </StrictMode>,
 )

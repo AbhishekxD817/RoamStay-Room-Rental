@@ -112,7 +112,7 @@ const ReviewCard = ({ review, lid , fetchListing}) => {
             </CardBody>
             <CardFooter>
                 <p className="text-small text-default-500">
-                    By {'author'} on {formatter(review.createdAt)}
+                    By {review.owner.name} on {formatter(review.createdAt)}
                 </p>
             </CardFooter>
         </Card>

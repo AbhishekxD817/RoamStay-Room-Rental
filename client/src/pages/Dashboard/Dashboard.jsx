@@ -8,43 +8,39 @@ import { Link } from 'react-router-dom';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import api from '../../api/api';
 import { deleteListing, getAllListings } from '../../api/listingApi';
+import { fetchUserDetails } from '../../api/userApi.js';
 
 
 
 const Dashboard = () => {
 
 
-    const [listings, setListings] = useState([])
-    
-    useEffect(()=>{
-        (async function(){
-            await getListings();
-        })()
-    },[])
+    const [listings, setListings] = useState([]);
 
-    async function getListings(){
-            try {
-                const response = await getAllListings();
-                if(response && response.status == 200){
-                    setListings(response.data.listings);
-                    return;
-                }
-            } catch (error) {
-                console.log("Error => ",error);
-                console.log(error)
-                return;
+    useEffect(() => {
+        fetchUser();
+    }, [])
+
+    async function fetchUser() {
+        try {
+            let response = await fetchUserDetails();
+            if(response.status == 200){
+                setListings(response.data.user.listings)
             }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const handleDeleteListingBtn = async (id) => {
         try {
             const response = await deleteListing(id);
-            if(response.status == 200){
-                await getListings();
+            if (response.status == 200) {
+                await fetchUser();
                 return;
             }
         } catch (error) {
-            console.log("Error => ",error);
+            console.log("Error => ", error);
         }
     }
 
@@ -85,7 +81,7 @@ const Dashboard = () => {
                                         <MdEdit />
                                     </Button>
 
-                                    <Button isIconOnly onClick={(e)=>{handleDeleteListingBtn(listing._id)}} className='bg-red-500 text-white text-lg'>
+                                    <Button isIconOnly onClick={(e) => { handleDeleteListingBtn(listing._id) }} className='bg-red-500 text-white text-lg'>
                                         <MdDelete />
                                     </Button>
                                 </TableCell>

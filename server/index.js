@@ -5,6 +5,9 @@ import listingRouter from './routers/listing-router.js';
 import reviewRouter from './routers/review-router.js';
 import ExpressErrors from './utils/ExpressErrors.js';
 import cors from 'cors';
+import authRouter from './routers/auth-router.js';
+import userRouter from './routers/user-router.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const corsOptions = {
@@ -13,10 +16,14 @@ const corsOptions = {
     credentials:true
 }
 app.use(cors(corsOptions));
+app.use(cookieParser())
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 
+
+app.use('/auth',authRouter);
+app.use('/users',userRouter);
 app.use('/listings/:lid/reviews',reviewRouter);
 app.use('/listings',listingRouter);
 
