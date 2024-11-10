@@ -6,6 +6,7 @@ import { Input } from "@nextui-org/input"
 import { Textarea } from "@nextui-org/input"
 import { Card, CardHeader, CardFooter, CardBody } from "@nextui-org/card"
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 
 
@@ -27,22 +28,23 @@ const EditListingPage = () => {
                 formData.append(key, value);
             }
         }
-        console.log(formData)
 
         try {
             const response = await updateListing(listing._id, formData);
             if (response.status != 200) {
-                console.log("Error")
-            }
+                const { message = "Error"} = error;
+                toast.error(message);
+                return;            }
             console.log(response.data);
             return navigate(`/listings/${listing._id}`);
         } catch (error) {
-            console.log(error);
-        }
+            const { message = "Error"} = error;
+            toast.error(message);
+            return;        }
     }
 
     useEffect(() => {
-        document.title = listing ? `Edit | ${listing.title}` : "Edit Listing";
+        document.title = listing ? `Edit - ${listing.title} | RoamStay` : "Edit Listing";
     }, [listing])
 
     useEffect(() => {

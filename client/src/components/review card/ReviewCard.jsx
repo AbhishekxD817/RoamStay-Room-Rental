@@ -9,11 +9,13 @@ import { Delete, DollarSign, Edit, IndianRupee, MapPin, Send, Star, Trash } from
 import { Button } from "@nextui-org/button";
 import { Image } from "@nextui-org/image";
 import { createReview, deleteReview, updateReview } from "../../api/reviewApi.js";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 
 
 
-const ReviewCard = ({ review, lid , fetchListing}) => {
+const ReviewCard = ({ review, lid, fetchListing }) => {
 
     const formatter = (dateString) => {
         const options = { year: "numeric", month: "long", day: "numeric" }
@@ -25,14 +27,16 @@ const ReviewCard = ({ review, lid , fetchListing}) => {
 
     const handleReviewUpdateForm = async (data) => {
         try {
-            let response = await updateReview(lid,review._id,data);
-            if(response.status == 200){
+            let response = await updateReview(lid, review._id, data);
+            if (response.status == 200) {
                 setIsEditing(!isEditing);
                 await fetchListing();
                 return;
             }
         } catch (error) {
-            console.log("ERror => ", error);
+            const { message = "Error" } = error;
+            toast.error(message);
+            return;
         }
     }
 
@@ -45,10 +49,17 @@ const ReviewCard = ({ review, lid , fetchListing}) => {
             }
             return;
         } catch (error) {
-            console.log("Error =>", error);
+            const { message = "Error" } = error;
+            toast.error(message);
+            return;
         }
     }
 
+    const user = useSelector((store) => store.auth.user);
+    useEffect(()=>{
+        console.log("user =>",review.owner);
+        
+    },[user])
 
     return (
         <Card key={review._id}
@@ -93,12 +104,16 @@ const ReviewCard = ({ review, lid , fetchListing}) => {
                         :
                         <p className="mb-2">{review.content}</p>
                     }
-                    <div className="flex gap-1">
-                        <Button isIconOnly onClick={(e) => { setIsEditing(() => !isEditing) }} className="bg-green-300"><Edit size={16} /></Button>
-                        <Button onClick={(e) => {
-                            handleReviewDeleteButton(review._id);
-                        }} isIconOnly className="bg-red-300"><Trash size={16} /></Button>
-                    </div>
+
+                    {
+                        user  && user._id == review.owner._id &&
+                        <div className="flex gap-1">
+                            <Button isIconOnly onClick={(e) => { setIsEditing(() => !isEditing) }} className="bg-green-300"><Edit size={16} /></Button>
+                            <Button onClick={(e) => {
+                                handleReviewDeleteButton(review._id);
+                            }} isIconOnly className="bg-red-300"><Trash size={16} /></Button>
+                        </div>
+                    }
                 </div>
                 <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (

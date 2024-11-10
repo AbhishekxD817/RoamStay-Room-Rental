@@ -11,10 +11,13 @@ import { createReview, deleteReview, updateReview } from "../../api/reviewApi.js
 import ReviewCard from "../../components/review card/ReviewCard.jsx";
 
 const ShowListingPage = () => {
+
+    
+    
     const { id } = useParams();
     const [error, setError] = useState(null);
     const [listing, setListing] = useState();
-
+    
     async function fetchListing() {
         const response = await showListing(id);
         if (response.status != 200) {
@@ -24,42 +27,44 @@ const ShowListingPage = () => {
         }
         setListing(response.data.listing);
     }
-
-    useEffect(() => {
-        document.title = listing ? listing.title : "Error";
-    }, [listing])
-
+    
+    
     useEffect(() => {
         (async function () {
             await fetchListing();
         })()
     }, [])
-
-
-
+    
+    
+    
     // handle reviews(
-    const { register, handleSubmit, reset } = useForm();
-
-    const handleReviewFormSubmit = async (data) => {
-        try {
-            let response = await createReview(listing._id, data);
-            if (response.status == 200) {
+        const { register, handleSubmit, reset } = useForm();
+        
+        const handleReviewFormSubmit = async (data) => {
+            try {
+                let response = await createReview(listing._id, data);
+                if (response.status == 200) {
                 await fetchListing();
                 reset();
                 return;
             }
             console.log(response);
         } catch (error) {
-            console.log("ERrror => ", error);
+            const { message = "Error"} = error;
+            toast.error(message);
+            return;        }
         }
-    }
-
-
-
-
-
-    return (
-        <>
+        
+        
+        
+        
+        // title change
+        useEffect(() => {
+            document.title = listing ? `${listing.title} | RoamStay` : "Error";
+        }, [listing])
+        
+        return (
+            <>
             {error != null && <h1>Error</h1>
             }
             {listing &&

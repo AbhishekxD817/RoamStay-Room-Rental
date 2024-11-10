@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from '@nextui-org/button'
 import { Card,CardBody,CardFooter } from '@nextui-org/card'
 import { Image } from '@nextui-org/image'
@@ -13,6 +13,11 @@ export default function ImprovedFrontPageBody() {
     { id: 3, title: "Modern City Loft", location: "New York City, USA", price: 200, rating: 4.7, image: "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWwlMjByb29tfGVufDB8fDB8fHww" },
     { id: 4, title: "Rustic Countryside Cottage", location: "Cotswolds, UK", price: 150, rating: 4.9, image: "https://plus.unsplash.com/premium_photo-1675616563084-63d1f129623d?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8aG90ZWwlMjByb29tfGVufDB8fDB8fHww" },
   ]
+
+  useEffect(()=>{
+    document.title = "Home | RoamStay",
+    document.fav
+  },[])
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">

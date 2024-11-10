@@ -5,6 +5,8 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { setUser } from "../../store/slice/authSlice"
 import { isAuthenticated } from "../../api/authApi"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Wrapper = () => {
     const dispatch = useDispatch();
@@ -18,27 +20,24 @@ const Wrapper = () => {
 
     const checkIsAuthenticated = async () => {
         try {
-            console.log("checking auth status...")
+            toast.info("Checking Auth status...")
             let response = await isAuthenticated();
-            if (response.status != 200) {
-                console.log(response)
+            if (response && response.data.isAuthenticated && response.data.user) {
+                dispatch(setUser(response.data.user));
+                toast.success("Already Logged In")
                 return;
             }
-            if (response.data.isAuthenticated && response.data.user) {
-                await dispatch(setUser(response.data));
+            if(response == undefined){
+                toast.error("We use Render FREE service for backend serve and it takes upto 1-2 mins to start...");
                 return;
             }
-            console.log("user => null")
+            toast.warning(response.data.message);
         } catch (error) {
-            console.log("Error => ", error);
+            const { message = "Error"} = error;
+            toast.error(message);
+            return;
         }
     }
-
-    useEffect(() => {
-        if (user) {
-            console.log("Updated user:", user);
-        }
-    }, [user]);
 
     return <>
         <Header />
@@ -46,6 +45,12 @@ const Wrapper = () => {
             <Outlet />
         </main>
         <Footer />
+        <ToastContainer
+            position="bottom-right"
+            draggable
+            theme="dark"
+            
+        />
     </>
 }
 

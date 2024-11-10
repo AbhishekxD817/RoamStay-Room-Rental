@@ -22,23 +22,25 @@ import { RiDashboardHorizontalFill } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../api/authApi';
 import { clearUser } from '../../store/slice/authSlice';
+import { toast } from 'react-toastify';
 
 
 export default function Header() {
   const auth = useSelector((store) => store.auth);
   const dispatch = useDispatch();
 
-  const handleLogoutBtn = async() =>{
+  const handleLogoutBtn = async () => {
     try {
       let response = await logout();
-      if(response.status != 200){
-        console.log(response);
+      if (response && response.status == 200) {
+        dispatch(clearUser());
+        toast.error("Logout Success")
         return;
       }
-      dispatch(clearUser());
       return;
     } catch (error) {
-      console.log(error);
+      const { message = "Error" } = error;
+      toast.error(message);
       return;
     }
   }

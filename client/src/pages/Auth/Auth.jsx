@@ -1,53 +1,80 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Button } from '@nextui-org/button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Input } from '@nextui-org/input'
 import { useForm } from 'react-hook-form'
 import '../../components/header/Header.css'
 import { login, signup } from "../../api/authApi.js";
 import { setUser } from "../../store/slice/authSlice.js";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 function Auth() {
+
+    // change page title
+    useEffect(()=>{
+        document.title = "Auth | RoamStay"
+    },[])
+
     const [selected, setSelected] = React.useState("login");
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
 
     // signup
-    const { register: signupRegister, handleSubmit: signupHandleSubmit , reset:signupFormReset} = useForm();
+    const { register: signupRegister, handleSubmit: signupHandleSubmit, reset: signupFormReset } = useForm();
     const handleSignup = async (data) => {
 
         try {
             const response = await signup(data);
-            if (response.status != 200) {
-                console.log(response);
+            if (response && response.status == 200) {
+                const { email, name , _id} = response.data.user;
+                dispatch(setUser({ email, name, _id }));
+                signupFormReset();
+                toast.success("Signup successfull");
+                navigate('/listings');
                 return;
             }
-            const { email, name } = data;
-            dispatch(setUser({ email, name }));
-            signupFormReset();
+            if(response == undefined){
+                toast.error("We use Render FREE service for backend serve and it takes upto 1-2 mins to start...");
+                return;
+            }
+            toast.warning(response.data.message);
+
         } catch (error) {
-            console.log("Error =>", error);
+            const { message = "Error" } = error;
+            toast.error(message);
+            return;
         }
     }
 
     // login
-    const { register: loginRegister, handleSubmit: loginHandleSubmit , reset:loginFormReset } = useForm();
+    const { register: loginRegister, handleSubmit: loginHandleSubmit, reset: loginFormReset } = useForm();
     const handleLogin = async (data) => {
-        console.log(data);
         try {
             const response = await login(data);
-            if (response.status != 200) {
-                console.log(response);
+            if (response && response.status == 200) {
+                const { email, name,_id, } = response.data.user;
+                dispatch(setUser({ email, name ,_id}));
+                loginFormReset();
+                toast.success(response.data.message);
+                navigate("/listings")
                 return;
             }
-            const { email, name } = response.data.user;
-            dispatch(setUser({ email, name }));
-            loginFormReset();
+            if(response && response.status != 200){
+                toast.warning(response.data.message);
+            }
+            if(response == undefined){
+                toast.error("We use Render FREE service for backend serve and it takes upto 1-2 mins to start...");
+                return;
+            }
+            
         } catch (error) {
-            console.log("Error =>", error);
+            const { message = "Error" } = error;
+            toast.error(message);
+            return;
         }
     }
 

@@ -4,16 +4,26 @@ import { useEffect, useState } from 'react'
 import { Button } from "@nextui-org/button"
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { PlusCircle, MoreHorizontal, Pencil, Trash } from 'lucide-react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import api from '../../api/api';
 import { deleteListing, getAllListings } from '../../api/listingApi';
 import { fetchUserDetails } from '../../api/userApi.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../store/slice/authSlice.js';
 
 
 
 const Dashboard = () => {
+    const auth = useSelector((store)=> store.auth);
+    const navigate = useNavigate();
 
+    // user can access dashboard if its logged in
+    useEffect(()=>{
+        if(!auth.isAuthenticated){
+            navigate("/auth");
+        }
+    },[auth])
 
     const [listings, setListings] = useState([]);
 
@@ -21,14 +31,22 @@ const Dashboard = () => {
         fetchUser();
     }, [])
 
+    useEffect(()=>{
+        document.title = "Home | RoamStay"
+      },[])
+
     async function fetchUser() {
         try {
             let response = await fetchUserDetails();
-            if(response.status == 200){
+            if (response.status == 200) {
                 setListings(response.data.user.listings)
+                useDispatch(setUser(response.data.user));
             }
+            toast.error(response.data.message);
         } catch (error) {
-            console.log(error);
+            const { message = "Error" } = error;
+            toast.error(message);
+            return;
         }
     }
 
@@ -40,7 +58,9 @@ const Dashboard = () => {
                 return;
             }
         } catch (error) {
-            console.log("Error => ", error);
+            const { message = "Error" } = error;
+            toast.error(message);
+            return;
         }
     }
 

@@ -28,7 +28,12 @@ export const signup = async (req, res, next) => {
     res.cookie('token', token, cookieOptions);
 
     return res.json({
-        messgae: "Signup successful"
+        message: "Signup successful",
+        user:{
+            _id:newUser._id,
+            email,
+            name
+        }
     })
 }
 
@@ -47,12 +52,13 @@ export const login = async (req, res, next) => {
     let token = await user.genToken(user._id);
     res.cookie('token', token, cookieOptions);
 
-    let { name } = user;
+    let { name} = user;
     return res.json({
-        messgae: "Login Successfull",
+        message: "Login Successfull",
         user: {
             name,
-            email
+            email,
+            _id:user._id
         }
 
     })
@@ -61,7 +67,7 @@ export const login = async (req, res, next) => {
 export const logout = async (req, res, next) => {
     res.cookie('token', '', { maxAge: 0 });
     return res.json({
-        messgae: "Logout Successfull"
+        message: "Logout Successfull"
     })
 }
 
@@ -78,6 +84,7 @@ export const isLoggedIn = async (req, res, next) => {
         let user = await User.findById(validateToken.payload);
 
         return res.json({
+            message:"Is Logged in",
             isAuthenticated: true,
             user
         })

@@ -5,8 +5,17 @@ import { Card, CardHeader, CardFooter, CardBody } from "@nextui-org/card"
 import { useForm } from "react-hook-form";
 import { createListing } from "../../api/listingApi.js";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const CreateListingPage = () => {
+
+    // title change
+    useEffect(()=>{
+        document.title = "Create Listing | RoamStay"
+      },[])
+      
+
     const navigate = useNavigate();
     const { handleSubmit, reset, register } = useForm();
 
@@ -22,17 +31,22 @@ const CreateListingPage = () => {
             }
         }
 
-        console.log(formData);
-
         try {
             const response = await createListing(formData);
-            if (response.status != 200) {
-                console.log("Error")
+            if (response && response.status == 200) {
+                toast.success("New Listing Created")
+                return navigate('/listings');
             }
-            console.log(response.data.message);
-            return navigate('/listings');
+            if(response == undefined){
+                toast.error("We use Render FREE service for backend serve and it takes upto 1-2 mins to start...");
+                return;
+            }
+            toast.warning(response.data.message);
+            
         } catch (error) {
-            console.log(error);
+            const { message = "Error"} = error;
+            toast.error(message);
+            return;
         }
     }
 

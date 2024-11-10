@@ -1,4 +1,5 @@
 import api from "./api";
+import { toast } from "react-toastify";
 
 
 
@@ -7,9 +8,10 @@ export const getAllListings = async () => {
         let response = await api.get("/listings");
         return response;
     } catch (error) {
-        console.log(error)
-        console.log("Error => " + error);
+        const { message = "Error" } = error;
+        toast.error(message);
         return;
+
     }
 }
 
@@ -18,8 +20,10 @@ export const createListing = async (data) => {
         let response = await api.post("/listings",data);
         return response;
     } catch (error) {
-        console.log("Error => " + error);
+        const { message = "Error" } = error;
+        toast.error(message);
         return;
+
     }
 }
 
@@ -28,8 +32,10 @@ export const showListing = async (id) => {
         let response = await api.get(`/listings/${id}`);
         return response;
     } catch (error) {
-        console.log("Error => " + error);
+        const { message = "Error" } = error;
+        toast.error(message);
         return;
+
     }
 }
 
@@ -38,8 +44,10 @@ export const updateListing = async (id,data) => {
         let response = await api.put(`/listings/${id}`,data);
         return response;
     } catch (error) {
-        console.log("Error => " + error);
+        const { message = "Error" } = error;
+        toast.error(message);
         return;
+
     }
 }
 
@@ -48,8 +56,10 @@ export const deleteListing = async (id) => {
         let response = await api.delete(`/listings/${id}`);
         return response;
     } catch (error) {
-        console.log("Error => " + error);
+        const { message = "Error" } = error;
+        toast.error(message);
         return;
+
     }
 }
 
