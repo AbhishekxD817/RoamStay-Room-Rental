@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 
 const app = express();
 const corsOptions = {
-    origin:"http://localhost:5173",
+    origin:"https://roamstay-room-rental.netlify.app/",
     optionsSuccessStatus: 200,
     credentials:true
 }
